@@ -3,7 +3,7 @@
  * @version 0.1
  */
 
-package com.ludussquare.mmonline.server.models;
+package com.ludussquare.mmonline.server.schemas;
 import org.mongodb.morphia.annotations.Entity;
 
 @Entity("users")

@@ -1,4 +1,4 @@
-package com.ludussquare.mmonline.server.models;
+package com.ludussquare.mmonline.server.schemas;
 
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
