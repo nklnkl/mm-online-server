@@ -4,7 +4,6 @@
  */
 
 package com.ludussquare.mmonline.server.models;
-import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Entity;
 
 @Entity("users")
@@ -17,13 +16,7 @@ public class User extends Base {
 	private int points;
 	private float x;
 	private float y;
-	public ObjectId getId() {
-		return id;
-	}
-	
-	public User () {
-		
-	}
+	public User () {}
 	public String getUsername() {
 		return username;
 	}
@@ -66,6 +59,4 @@ public class User extends Base {
 	public void setY(float y) {
 		this.y = y;
 	}
-	
-	
 }
