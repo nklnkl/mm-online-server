@@ -18,7 +18,7 @@ public class Mongo {
 		// Creates instance for morphia ORM.
 		morphia = new Morphia();
 		// Create mapping of models.
-		morphia.mapPackage("models");
+		morphia.mapPackage("com.ludussquare.mmonline.server.models");
 		// Set the URI & DB.
 		uri = new MongoClientURI("mongodb://mm-online:mmonline@ds157677.mlab.com:57677/mm-online-db");
 		db = "mm-online-db";
