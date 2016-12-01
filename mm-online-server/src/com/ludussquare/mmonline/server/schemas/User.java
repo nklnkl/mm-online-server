@@ -13,7 +13,7 @@ public class User extends Base {
 	private String passsword;
 	private int color;
 	private int room;
-	private int points;
+	private int level;
 	private float x;
 	private float y;
 	public User () {}
@@ -41,11 +41,11 @@ public class User extends Base {
 	public void setRoom(int room) {
 		this.room = room;
 	}
-	public int getPoints() {
-		return points;
+	public int getLeve() {
+		return level;
 	}
-	public void setPoints(int points) {
-		this.points = points;
+	public void setLevel(int level) {
+		this.level = level;
 	}
 	public float getX() {
 		return x;
