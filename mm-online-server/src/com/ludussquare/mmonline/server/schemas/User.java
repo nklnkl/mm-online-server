@@ -9,13 +9,13 @@ import org.mongodb.morphia.annotations.Entity;
 @Entity("users")
 public class User extends Base {
 	
-	private String username;
-	private String passsword;
-	private int color;
-	private int room;
-	private int level;
-	private float x;
-	private float y;
+	private String username = "";
+	private String passsword = "";
+	private int color = -1;
+	private int room = -1;
+	private int level = -1;
+	private float x = -1;
+	private float y = -1;
 	public User () {}
 	public String getUsername() {
 		return username;
@@ -41,7 +41,7 @@ public class User extends Base {
 	public void setRoom(int room) {
 		this.room = room;
 	}
-	public int getLeve() {
+	public int getLevel() {
 		return level;
 	}
 	public void setLevel(int level) {
