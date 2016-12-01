@@ -10,6 +10,7 @@ import org.mongodb.morphia.query.UpdateResults;
 
 import com.ludussquare.mmonline.server.schemas.User;
 import com.ludussquare.mmonline.server.services.Mongo;
+import com.mongodb.WriteResult;
 
 public class UserModel {
 	private Mongo mongo;
@@ -71,7 +72,7 @@ public class UserModel {
 	}
 	
 	// Creates a new user.
-	public String createNewUser (String username, String password) {
+	public String create (String username, String password) {
 		User user = new User();
 		user.setUsername(username);
 		user.setPasssword(password);
@@ -85,7 +86,7 @@ public class UserModel {
 		return getByUsername(username).getIdHex();
 	}
 	
-	public boolean updateUser (User userUpdate) {
+	public boolean update (User userUpdate) {
 		
 		// The user to perform an update on.
 		User user;
@@ -130,5 +131,20 @@ public class UserModel {
 		} else {
 			return false;
 		}
+	}
+	
+	public boolean delete(ObjectId id) {
+		// The user to delete.
+		User user;
+		// Get user by ObjectId.
+		user = getById(id);
+		// The result of the delete.
+		WriteResult result;
+		
+		// Run delete method. Store results. Make use later.
+		result = mongo.getDatastore().delete(user);
+		
+		// For now returns true automatically. Need to use result to check if delete actually happened.
+		return true;
 	}
 }
