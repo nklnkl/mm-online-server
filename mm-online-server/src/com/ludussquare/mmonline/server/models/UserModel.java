@@ -126,7 +126,7 @@ public class UserModel {
 		results = mongo.getDatastore().update(user, update);
 		
 		// If anyting was updated, return true. Otherwise, return false.
-		if (results.getInsertedCount() > 0) {
+		if (results.getUpdatedCount() > 0) {
 			return true;
 		} else {
 			return false;
