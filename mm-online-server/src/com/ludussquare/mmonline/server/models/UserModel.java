@@ -1,6 +1,5 @@
 package com.ludussquare.mmonline.server.models;
 
-import java.nio.file.attribute.UserPrincipalLookupService;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -10,6 +9,7 @@ import org.mongodb.morphia.query.UpdateResults;
 
 import com.ludussquare.mmonline.server.schemas.User;
 import com.ludussquare.mmonline.server.services.Mongo;
+import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
 
 public class UserModel {
@@ -144,7 +144,11 @@ public class UserModel {
 		// Run delete method. Store results. Make use later.
 		result = mongo.getDatastore().delete(user);
 		
-		// For now returns true automatically. Need to use result to check if delete actually happened.
-		return true;
+		// If there was a documented affected, return true, otherwise false.
+		if (result.getN() > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
