@@ -86,17 +86,12 @@ public class UserModel {
 		return;
 	}
 	
-	public boolean update (String id, User userUpdate) {
+	public boolean update (User user, User userUpdate) {
 		
-		// The user to perform the update on.
-		User user;
 		// The update to perform.
 		UpdateOperations<User> update;
 		// The results of the update.
 		UpdateResults results;
-		
-		// Get the user by id.
-		user = getById(id);
 		
 		// Create update.
 		update = mongo.getDatastore().createUpdateOperations(User.class);
@@ -112,7 +107,7 @@ public class UserModel {
 		// Run update.
 		results = mongo.getDatastore().update(user, update);
 		
-		// If anyting was updated, return true. Otherwise, return false.
+		// If anything was updated, return true. Otherwise, return false.
 		if (results.getUpdatedCount() > 0) {
 			return true;
 		} else {
@@ -120,11 +115,8 @@ public class UserModel {
 		}
 	}
 	
-	public boolean delete(String id) {
-		// The user to delete.
-		User user;
-		// Get user by ObjectId.
-		user = getById(id);
+	public boolean delete(User user) {
+		
 		// The result of the delete.
 		WriteResult result;
 		

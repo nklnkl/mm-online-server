@@ -3,10 +3,11 @@ package com.ludussquare.mmonline.server.controllers;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.ludussquare.mmonline.server.models.SessionModel;
 import com.ludussquare.mmonline.server.models.UserModel;
+import com.ludussquare.mmonline.server.schemas.Session;
 import com.ludussquare.mmonline.server.schemas.User;
 import com.ludussquare.mmonline.server.services.Mongo;
-import com.mongodb.util.JSON;
 
 import spark.Request;
 import spark.Response;
@@ -16,10 +17,12 @@ import spark.Route;
 public class UserController {
 	
 	private UserModel userModel;
+	private SessionModel sessionModel;
 	private Gson gson;
 	
 	public UserController(Mongo mongo) {
 		this.userModel = new UserModel(mongo);
+		this.sessionModel = new SessionModel(mongo);
 		gson = new Gson();
 		listRoom();
 		registerUser();
@@ -31,29 +34,41 @@ public class UserController {
 	private void updateUser() {
 		spark.Spark.patch("/users", new Route() {
 			@Override
-			public Object handle(Request arg0, Response arg1) throws Exception {
+			public Object handle(Request req, Response res) throws Exception {
 				
-				// Get json string of session token from req headers.
+				// Cache body json from req.body.
+				String bodyJson = req.body();
 				
-				// Pass session token json string to Session model to auth.
-				// This also returns a user object id, store it.
+				// Cache sessionId from headers.
+				String sessionId = req.headers("session");
 				
-				// If auth, proceed normally
+				// The session to be used for this request.
+				Session session = sessionModel.getById(sessionId);
 				
-					// Find user by using the user objectId.
-				
-					// Using req.body, create UserUpdate schema
-				
-					// Pass user to be updated and userUpdate to userModel.update
-					// Use returned boolean to check success
-				
-					// If successful, set to 200 ok
-				
-					// Otherwise set to 500 server error
-				
-				// Else set res status to 401 unauthorized
-				
-				return null;
+				// If session is not null, proceed normall, otherwise set res.status to 401.
+				if (session != null) {
+					
+					// Get user to be updated, by using the retrieved session.
+					User user = session.getUser();
+					
+					// Using req.body, create user update schema.
+					User userUpdate = gson.fromJson(bodyJson, User.class);
+					
+					// Run update and check for success.
+					boolean success = userModel.update(user, userUpdate);
+					
+					if (success) {
+						res.status(200);
+					} else {
+						res.status(500);
+					}
+				}
+				else {
+					res.status(404);
+				}
+
+				res.type("application/json");
+				return res;
 			}
 		});
 	}
@@ -61,24 +76,36 @@ public class UserController {
 	private void deleteUser() {
 		spark.Spark.patch("/users", new Route() {
 			@Override
-			public Object handle(Request arg0, Response arg1) throws Exception {
+			public Object handle(Request req, Response res) throws Exception {
 				
-				// Get json string of session token from req headers.
+				// Cache session id from headers.
+				String sessionId = req.headers("session");
 				
-				// Pass session token json string to Session model to auth.
-				// This also returns a user object id, store it.
+				// The session to be used for this request.
+				Session session = sessionModel.getById(sessionId);
 				
-				// If auth, proceed normally
+				// If session is not null, continue. Otherwise set res.status to 401.
+				if (session != null) {
+					
+					// Get user using session.
+					User user = session.getUser();
+					
+					// Using user model, delete user. Check success
+					boolean success = userModel.delete(user);
+					
+					if (success) {
+						res.status(200);
+					} else {
+						res.status(500);
+					}
+					
+					// 
+				} else {
+					res.status(401);
+				}
 				
-					// Pass user id to userModel.delete
-				
-					// If it returns true, set status to 200 ok
-				
-					// Otherwise set status to 500 server error
-				
-				// Else set res status to 401 unauthorized
-				
-				return null;
+				res.type("application/json");
+				return res;
 			}
 		});
 	}
@@ -106,7 +133,8 @@ public class UserController {
 				} else {
 					res.status(500);
 				}
-				
+
+				res.type("application/json");
 				return res;
 			}
 		});
