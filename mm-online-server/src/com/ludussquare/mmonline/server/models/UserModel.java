@@ -9,7 +9,6 @@ import org.mongodb.morphia.query.UpdateResults;
 
 import com.ludussquare.mmonline.server.schemas.User;
 import com.ludussquare.mmonline.server.services.Mongo;
-import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
 
 public class UserModel {
@@ -21,7 +20,7 @@ public class UserModel {
 		this.mongo = mongo;
 	}
 	
-	public User getById (ObjectId id) {
+	public User getById (String id) {
 		// Search by id.
 		query = mongo.getDatastore().createQuery(User.class)
 				.filter("id", id);
@@ -55,7 +54,7 @@ public class UserModel {
 	public List<User> getByRoom (int room) {
 		// Search by room.
 		query = mongo.getDatastore().createQuery(User.class)
-				.filter("room", room);
+				.filter("room", room).retrievedFields(true, "username");
 		// Return list.
 		list = query.asList();
 		return list;
@@ -65,7 +64,7 @@ public class UserModel {
 	public List<User> getByLevel (int level) {
 		// Search by level.
 		query = mongo.getDatastore().createQuery(User.class)
-				.filter("level", level);
+				.filter("level", level).retrievedFields(true, "username");
 		// Return list.
 		list = query.asList();
 		return list;
@@ -86,10 +85,8 @@ public class UserModel {
 		return getByUsername(username).getIdHex();
 	}
 	
-	public boolean update (User userUpdate) {
+	public boolean update (User user, User userUpdate) {
 		
-		// The user to perform an update on.
-		User user;
 		// The update to perform.
 		UpdateOperations<User> update;
 		// The results of the update.
@@ -118,9 +115,6 @@ public class UserModel {
 		if (userUpdate.getY() != -1) {
 			update.set("y", userUpdate.getY());
 		}
-		
-		// Get user to update.
-		user = getById(userUpdate.getId());
 
 		// Run update.
 		results = mongo.getDatastore().update(user, update);
@@ -133,7 +127,7 @@ public class UserModel {
 		}
 	}
 	
-	public boolean delete(ObjectId id) {
+	public boolean delete(String id) {
 		// The user to delete.
 		User user;
 		// Get user by ObjectId.
