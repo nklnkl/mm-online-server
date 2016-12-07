@@ -19,14 +19,6 @@ public class UserModel {
 		this.mongo = mongo;
 	}
 	
-	// Returns a user using its hex id.
-	public User get (String id) {
-		Query<User> query = mongo.getDatastore().createQuery(User.class);
-		query.filter("id", id);
-		
-		return query.asList().get(0);
-	}
-	
 	// Returns a user using its username and password. Can also be used for auth.
 	public User get (String username, String password) {
 		Query<User> query = mongo.getDatastore().createQuery(User.class);

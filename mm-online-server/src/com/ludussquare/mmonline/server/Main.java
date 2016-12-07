@@ -1,6 +1,5 @@
 package com.ludussquare.mmonline.server;
 
-import com.ludussquare.mmonline.server.controllers.UserController;
 import com.ludussquare.mmonline.server.services.Mongo;
 import spark.Spark.*;
 
@@ -12,7 +11,6 @@ public class Main {
 		// TODO Auto-generated method stub
 		spark.Spark.port(getPort());
 		mongo = new Mongo();
-		new UserController(mongo);
 	}
 	
 	static int getPort() {

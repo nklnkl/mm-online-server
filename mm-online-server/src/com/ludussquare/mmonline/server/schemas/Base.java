@@ -17,10 +17,4 @@ public abstract class Base {
 		return id;
 	}
 	
-	public String getIdHex() {
-		return id.toHexString();
-	}
-	
-	
-	
 }
