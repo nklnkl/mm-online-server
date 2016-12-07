@@ -2,6 +2,7 @@ package com.ludussquare.mmonline.server.models;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 import org.mongodb.morphia.query.UpdateResults;
@@ -11,72 +12,54 @@ import com.ludussquare.mmonline.server.services.Mongo;
 import com.mongodb.WriteResult;
 
 public class UserModel {
+	
 	private Mongo mongo;
-	private Query<User> query;
-	private List<User> list;
 	
 	public UserModel (Mongo mongo) {
 		this.mongo = mongo;
 	}
 	
-	public User getById (String id) {
+	// Returns a user using its hex id.
+	public User get (String id) {
+		Query<User> query = mongo.getDatastore().createQuery(User.class);
+		query.filter("id", id);
 		
-		// Search by id.
-		query = mongo.getDatastore().
-				createQuery(User.class).
-				filter("id", id);
-		
-		// Return first in list.
-		list = query.asList();
-		
-		return list.get(0);
+		return query.asList().get(0);
 	}
 	
-	// Looks for a user by username and password
-	public User getByUsernameAndPassword (String username, String password) {
+	// Returns a user using its username and password. Can also be used for auth.
+	public User get (String username, String password) {
+		Query<User> query = mongo.getDatastore().createQuery(User.class);
+		query.filter("username", username);
+		query.filter("password", password);
 		
-		// Search by username and password.
-		query = mongo.getDatastore().createQuery(User.class)
-				.filter("username", username)
-				.filter("password", password);
-		
-		// Return first in list.
-		list = query.asList();
-		return list.get(0);
+		return query.asList().get(0);
 	}
 	
-	// Looks for a user by username
-	public User getByUsername (String username) {
-		// Search by username.
-		query = mongo.getDatastore().createQuery(User.class)
-				.filter("username", username);
-		// Return first in list.
-		list = query.asList();
-		return list.get(0);
+	public User get (ObjectId id) {
+		Query<User> query = mongo.getDatastore().createQuery(User.class);
+		query.filter("id", id);
+		
+		return query.asList().get(0);
 	}
 	
 	// Looks for users in a specific room.
-	public List<User> getByRoom (int room) {
+	public List<User> get (int room) {
 		// Search by room.
-		query = mongo.getDatastore().createQuery(User.class)
-				.filter("room", room).retrievedFields(true, "username");
+		Query<User> query = mongo.getDatastore().createQuery(User.class);
+		query.filter("room", room);
+		query.retrievedFields(true, "username");
+		
 		// Return list.
-		list = query.asList();
-		return list;
-	}
-	
-	// Looks for users of a specific level.
-	public List<User> getByLevel (int level) {
-		// Search by level.
-		query = mongo.getDatastore().createQuery(User.class)
-				.filter("level", level).retrievedFields(true, "username");
-		// Return list.
-		list = query.asList();
+		List<User> list = query.asList();
 		return list;
 	}
 	
 	// Creates a new user.
-	public User create (User user) {
+	public User create (String username, String password) {
+		User user = new User();
+		user.setUsername(username);
+		user.setPassword(password);
 		user.setColor(0);
 		user.setLevel(0);
 		user.setRoom(0);
@@ -88,16 +71,11 @@ public class UserModel {
 	
 	public boolean update (User user, User userUpdate) {
 		
-		// The update to perform.
-		UpdateOperations<User> update;
-		// The results of the update.
-		UpdateResults results;
-		
 		// Create update.
-		update = mongo.getDatastore().createUpdateOperations(User.class);
+		UpdateOperations<User> update = mongo.getDatastore().createUpdateOperations(User.class);
 		
 		// We check for 'null' updates
-		if (userUpdate.getPasssword() != null) update.set("password", userUpdate.getPasssword());
+		if (userUpdate.getPassword() != null) update.set("password", userUpdate.getPassword());
 		if (userUpdate.getColor() != -1) update.set("color", userUpdate.getColor());
 		if (userUpdate.getRoom() != -1) update.set("room", userUpdate.getRoom());
 		if (userUpdate.getLevel() != -1) update.set("level", userUpdate.getLevel());
@@ -105,7 +83,7 @@ public class UserModel {
 		if (userUpdate.getY() != -1) update.set("y", userUpdate.getY());
 
 		// Run update.
-		results = mongo.getDatastore().update(user, update);
+		UpdateResults results = mongo.getDatastore().update(user, update);
 		
 		// If anything was updated, return true. Otherwise, return false.
 		if (results.getUpdatedCount() > 0) {
@@ -117,11 +95,8 @@ public class UserModel {
 	
 	public boolean delete(User user) {
 		
-		// The result of the delete.
-		WriteResult result;
-		
-		// Run delete method. Store results. Make use later.
-		result = mongo.getDatastore().delete(user);
+		// Run delete method. Store results.
+		WriteResult result = mongo.getDatastore().delete(user);
 		
 		// If there was a documented affected, return true, otherwise false.
 		if (result.getN() > 0) {

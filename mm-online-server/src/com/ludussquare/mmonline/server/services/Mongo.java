@@ -31,31 +31,22 @@ public class Mongo {
 		// Set new properties for config.
 		properties = new Properties();
 		
-		// Try to get properties from file. This will only be successful on local.
+		input = getClass().getClassLoader().getResourceAsStream("Mongo.properties");
+		// Try to load inputstream into properties data. This will only be successful on local.
+		
 		try {
 			
-			input = new FileInputStream("Mongo.properties");
-			// Try to load inputstream into properties data. This will only be successful on local.
+			properties.load(input);
+			uriString = properties.getProperty("MongoUri");
 			
-			try {
-				
-				properties.load(input);
-				uriString = properties.getProperty("MongoUri");
-				
-			} catch (IOException e) {
-				
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				
-			}
+		} catch (IOException e) {
 			
-		// If the file doesn't load, we're on the production server and should pull the uri from the environment variables.
-		} catch (FileNotFoundException e) {
-			
-			uriString = System.getenv("MongoUri");
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
 		}
+		
+		if (uriString == null ) uriString = System.getenv("MongoUri");
 		
 		// Creates instance for morphia ORM.
 		morphia = new Morphia();

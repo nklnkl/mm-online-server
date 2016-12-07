@@ -10,7 +10,7 @@ import org.mongodb.morphia.annotations.Entity;
 public class User extends Base {
 	
 	private String username = "";
-	private String passsword = "";
+	private String password = "";
 	private int color = -1;
 	private int room = -1;
 	private int level = -1;
@@ -23,11 +23,11 @@ public class User extends Base {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	public String getPasssword() {
-		return passsword;
+	public String getPassword() {
+		return password;
 	}
-	public void setPasssword(String passsword) {
-		this.passsword = passsword;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	public int getColor() {
 		return color;
