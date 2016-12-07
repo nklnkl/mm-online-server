@@ -2,7 +2,6 @@ package com.ludussquare.mmonline.server.models;
 
 import java.util.List;
 
-import org.bson.types.ObjectId;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 import org.mongodb.morphia.query.UpdateResults;
@@ -21,20 +20,26 @@ public class UserModel {
 	}
 	
 	public User getById (String id) {
+		
 		// Search by id.
-		query = mongo.getDatastore().createQuery(User.class)
-				.filter("id", id);
+		query = mongo.getDatastore().
+				createQuery(User.class).
+				filter("id", id);
+		
 		// Return first in list.
 		list = query.asList();
+		
 		return list.get(0);
 	}
 	
 	// Looks for a user by username and password
 	public User getByUsernameAndPassword (String username, String password) {
+		
 		// Search by username and password.
 		query = mongo.getDatastore().createQuery(User.class)
 				.filter("username", username)
 				.filter("password", password);
+		
 		// Return first in list.
 		list = query.asList();
 		return list.get(0);
@@ -71,50 +76,38 @@ public class UserModel {
 	}
 	
 	// Creates a new user.
-	public String create (String username, String password) {
-		User user = new User();
-		user.setUsername(username);
-		user.setPasssword(password);
+	public void create (User user) {
 		user.setColor(0);
 		user.setLevel(0);
 		user.setRoom(0);
 		user.setX(0f);
 		user.setY(0f);
 		mongo.getDatastore().save(user);
-		// Get the recently saved user and get its objectId as a hex string.
-		return getByUsername(username).getIdHex();
+		return;
 	}
 	
-	public boolean update (User user, User userUpdate) {
+	public boolean update (String id, User userUpdate) {
 		
+		// The user to perform the update on.
+		User user;
 		// The update to perform.
 		UpdateOperations<User> update;
 		// The results of the update.
 		UpdateResults results;
 		
+		// Get the user by id.
+		user = getById(id);
+		
 		// Create update.
 		update = mongo.getDatastore().createUpdateOperations(User.class);
 		
-		// We check for 'null' members by checking strings for "", and int by checking
-		// for -1 values.
-		if (userUpdate.getColor() != -1) {
-			update.set("color", userUpdate.getColor());
-		}
-		if (userUpdate.getRoom() != -1) {
-			update.set("room", userUpdate.getRoom());
-		}
-		if (userUpdate.getLevel() != -1) {
-			update.set("level", userUpdate.getLevel());
-		}
-		if (userUpdate.getColor() != -1) {
-			update.set("color", userUpdate.getColor());
-		}
-		if (userUpdate.getX() != -1) {
-			update.set("x", userUpdate.getX());
-		}
-		if (userUpdate.getY() != -1) {
-			update.set("y", userUpdate.getY());
-		}
+		// We check for 'null' updates
+		if (userUpdate.getPasssword() != null) update.set("password", userUpdate.getPasssword());
+		if (userUpdate.getColor() != -1) update.set("color", userUpdate.getColor());
+		if (userUpdate.getRoom() != -1) update.set("room", userUpdate.getRoom());
+		if (userUpdate.getLevel() != -1) update.set("level", userUpdate.getLevel());
+		if (userUpdate.getX() != -1) update.set("x", userUpdate.getX());
+		if (userUpdate.getY() != -1) update.set("y", userUpdate.getY());
 
 		// Run update.
 		results = mongo.getDatastore().update(user, update);

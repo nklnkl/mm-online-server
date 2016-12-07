@@ -92,13 +92,16 @@ public class UserController {
 				String jsonString = req.body();
 				
 				// Parse json string into player schema.
-				User newUser = gson.fromJson(jsonString, User.class);
+				User user = gson.fromJson(jsonString, User.class);
 				
 				// Use model to create user from temporary buffer. Store result hex id.
-				String result = userModel.create(newUser.getUsername(), newUser.getPasssword());
+				userModel.create(user);
+				
+				// Look up user to see if it saved.
+				User confirmUser = userModel.getByUsernameAndPassword(user.getUsername(), user.getPasssword());
 				
 				// If there is a hex id, meaning it worked, return a 200.
-				if (result != null) {
+				if (confirmUser != null) {
 					res.status(200);
 				} else {
 					res.status(500);
@@ -119,6 +122,13 @@ public class UserController {
 				
 				// Use model to retrieve user schema.
 				User user = userModel.getById(userId);
+				
+				// If user was found, set 200, otherwise set 404.
+				if (user != null) {
+					res.status(200);
+				} else {
+					res.status(404);
+				}
 				
 				// Parse user into json string.
 				String userString = gson.toJson(user);
@@ -142,6 +152,13 @@ public class UserController {
 				
 				// Get list from model.
 				List<User> users = userModel.getByRoom(roomId);
+				
+				// If there are users found, set 200, otherwise 404.
+				if (users.size() > 0) {
+					res.status(200);
+				} else {
+					res.status(404);
+				}
 				
 				// Parse list into json string
 				String body = gson.toJson(users);
