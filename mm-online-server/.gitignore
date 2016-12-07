@@ -1,2 +1,3 @@
 /bin/
 /target/
+/src/com/ludussquare/mmonline/server/services/Mongo.properties
