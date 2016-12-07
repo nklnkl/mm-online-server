@@ -27,36 +27,49 @@ public class Mongo {
 	private InputStream input;
 	
 	public Mongo () {
+		
 		// Set new properties for config.
 		properties = new Properties();
 		
 		// Try to get properties from file. This will only be successful on local.
 		try {
-			input = new FileInputStream("Mongo.properties");
 			
+			input = new FileInputStream("Mongo.properties");
 			// Try to load inputstream into properties data. This will only be successful on local.
+			
 			try {
+				
 				properties.load(input);
 				uriString = properties.getProperty("MongoUri");
+				
 			} catch (IOException e) {
+				
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				
 			}
+			
 		// If the file doesn't load, we're on the production server and should pull the uri from the environment variables.
 		} catch (FileNotFoundException e) {
+			
 			uriString = System.getenv("MongoUri");
 			e.printStackTrace();
+			
 		}
 		
 		// Creates instance for morphia ORM.
 		morphia = new Morphia();
+		
 		// Create mapping of models.
 		morphia.mapPackage("com.ludussquare.mmonline.server.models");
+		
 		// Set the URI & DB using the properties file.
 		uri = new MongoClientURI(uriString);
 		db = "mm-online-db";
+		
 		// Use the URI to connect to the db.
 		client = new MongoClient(uri);
+		
 		// Create data store using the db.
 		datastore = morphia.createDatastore(client, db);
 	}
