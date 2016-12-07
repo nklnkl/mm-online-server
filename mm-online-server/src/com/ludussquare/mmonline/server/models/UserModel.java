@@ -76,14 +76,14 @@ public class UserModel {
 	}
 	
 	// Creates a new user.
-	public void create (User user) {
+	public User create (User user) {
 		user.setColor(0);
 		user.setLevel(0);
 		user.setRoom(0);
 		user.setX(0f);
 		user.setY(0f);
 		mongo.getDatastore().save(user);
-		return;
+		return user;
 	}
 	
 	public boolean update (User user, User userUpdate) {

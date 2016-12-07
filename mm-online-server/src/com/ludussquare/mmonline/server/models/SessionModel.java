@@ -53,14 +53,14 @@ public class SessionModel {
 		return list.get(0);
 	}
 	
-	public void createSession (User user) {
+	public Session createSession (User user) {
 		Session session = new Session();
 		session.setUser(user);
 		mongo.getDatastore().save(session);
+		return session;
 	}
 	
-	public boolean deleteSession (String sessionId) {
-		Session session = getById(sessionId);
+	public boolean deleteSession (Session session) {
 		
 		WriteResult result = mongo.getDatastore().delete(session);
 		

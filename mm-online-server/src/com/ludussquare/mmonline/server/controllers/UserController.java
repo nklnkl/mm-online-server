@@ -124,11 +124,8 @@ public class UserController {
 				// Use model to create user from temporary buffer. Store result hex id.
 				userModel.create(user);
 				
-				// Look up user to see if it saved.
-				User confirmUser = userModel.getByUsernameAndPassword(user.getUsername(), user.getPasssword());
-				
-				// If there is a hex id, meaning it worked, return a 200.
-				if (confirmUser != null) {
+				// If there is an objectId, meaning it worked, return a 200.
+				if (user.getId() != null) {
 					res.status(200);
 				} else {
 					res.status(500);
