@@ -2,6 +2,8 @@ package com.ludussquare.mmonline.server.models;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
+import org.junit.Test;
 import org.mongodb.morphia.query.Query;
 
 import com.ludussquare.mmonline.server.schemas.Session;
@@ -11,63 +13,65 @@ import com.mongodb.WriteResult;
 
 public class SessionModel {
 	private Mongo mongo;
-	private Query<Session> query;
-	private List<Session> list;
 	
 	public SessionModel (Mongo mongo) {
 		this.mongo = mongo;
 	}
 	
-	public boolean auth (String id) {
-		query = mongo.getDatastore().
-				createQuery(Session.class).
-				filter("id", id);
+	public Session get (ObjectId id) {
 		
-		list = query.asList();
+		Query<Session> query = mongo.getDatastore().createQuery(Session.class);
+		query.filter("id", id);
 		
+		List<Session> sessions = query.asList();
 		
-		if (list.size() == 1) {
-			return true;
+		if (sessions.size() < 1) {
+			return null;
 		} else {
-			return false;
+			return sessions.get(0);
 		}
 	}
 	
-	public Session getById (String id) {
-		query = mongo.getDatastore().
-				createQuery(Session.class).
-				filter("id", id);
+	public Session create () {
 		
-		list = query.asList();
-		
-		return list.get(0);
-	}
-	
-	public Session getByUser (User user) {
-		query = mongo.getDatastore().
-				createQuery(Session.class).
-				filter("id", user);
-		
-		list = query.asList();
-		
-		return list.get(0);
-	}
-	
-	public Session createSession (User user) {
+		// Create new session.
 		Session session = new Session();
+		
+		// Set user for session.
 		session.setUser(user);
+		
+		// Save session to dab.
 		mongo.getDatastore().save(session);
+		
+		// Return session info to client.
 		return session;
 	}
 	
-	public boolean deleteSession (Session session) {
+	public Session create (User user) {
 		
+		// Create new session.
+		Session session = new Session();
+		
+		// Set user for session.
+		session.setUser(user);
+		
+		// Save session to dab.
+		mongo.getDatastore().save(session);
+		
+		// Return session info to client.
+		return session;
+	}
+	
+	@Test
+	public boolean delete (Session session) {
 		WriteResult result = mongo.getDatastore().delete(session);
 		
+		// If there was a documented affected, return true, otherwise false.
 		if (result.getN() > 0) {
 			return true;
 		} else {
 			return false;
 		}
+		
 	}
 }
