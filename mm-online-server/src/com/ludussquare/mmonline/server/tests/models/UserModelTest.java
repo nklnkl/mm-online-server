@@ -28,7 +28,7 @@ public class UserModelTest {
 	}
 	
 	@Test
-	public void testCreate () {
+	public void create () {
 		// The test username and password.
 		String username = "usernameTest";
 		String password = "passwordTest";
@@ -39,7 +39,7 @@ public class UserModelTest {
 		User user = userModel.getByUsername(username);
 		
 		// Test if we get a 0, meaning nothing went wrong.
-		assertEquals(0, result, 0);
+		assertEquals("Should get a 0 from the register method.", 0, result, 0);
 		assertNotNull(user.getId());
 		
 		// Test if we get the mock data we registered, back.
@@ -53,7 +53,7 @@ public class UserModelTest {
 	}
 	
 	@Test
-	public void testCreateUsernameBlank () {
+	public void createBlankUsername () {
 		// The test username and password.
 		String username = "";
 		String password = "passwordTest";
@@ -67,7 +67,7 @@ public class UserModelTest {
 	}
 	
 	@Test
-	public void testCreatePasswordBlank () {
+	public void createPasswordBlank () {
 		// The test username and password.
 		String username = "usernameTest";
 		String password = "";
@@ -81,7 +81,7 @@ public class UserModelTest {
 	}
 	
 	@Test
-	public void testCreateNotUnique () {
+	public void createNotUnique () {
 		// The test username and password.
 		String username = "usernameTest1";
 		String password = "passwordTest1";
@@ -95,7 +95,7 @@ public class UserModelTest {
 	}
 	
 	@Test
-	public void testDelete () {
+	public void delete () {
 		// The test username and password.
 		String username = "usernameDelete";
 		String password = "passwordDelete";
@@ -107,8 +107,6 @@ public class UserModelTest {
 		String sessionId = sessionModel.registerSession(username, password);
 		
 		int result = userModel.deleteUser(sessionId);
-		
-		System.out.print(result);
 
 		// Test if we get a 0, meaning nothing went wrong.
 		assertEquals(0, result, 0);

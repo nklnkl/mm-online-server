@@ -59,7 +59,7 @@ public class SessionModel {
 	 * Returns an ObjectId for the new session if they were right.
 	 */
 	public String registerSession (String username, String password) {
-		// Instancce userModel.
+		// Instance userModel.
 		UserModel userModel = new UserModel(mongo);
 		
 		// Using user model, get the user.

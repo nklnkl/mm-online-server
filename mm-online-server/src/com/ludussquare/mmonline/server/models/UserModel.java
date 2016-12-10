@@ -76,7 +76,8 @@ public class UserModel {
 	public boolean delete (User user) {
 		// Run delete method. Store results.
 		WriteResult result = mongo.getDatastore().delete(user);
-		return result.isUpdateOfExisting();
+		if (result.getN() < 1) return false;
+		return true;
 	}
 	
 	/*
