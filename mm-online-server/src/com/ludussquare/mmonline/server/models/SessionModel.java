@@ -18,60 +18,93 @@ public class SessionModel {
 		this.mongo = mongo;
 	}
 	
-	public Session get (ObjectId id) {
-		
-		Query<Session> query = mongo.getDatastore().createQuery(Session.class);
+	/*
+	 * Level 1 - Methods that talk directly to the database and don't rely on other methods.
+	 */
+	public Session getById (String id) {
+		Query <Session> query = mongo.getDatastore().createQuery(Session.class);
 		query.filter("id", id);
-		
-		List<Session> sessions = query.asList();
-		
-		if (sessions.size() < 1) {
-			return null;
-		} else {
-			return sessions.get(0);
-		}
+		int size = query.asList().size();
+		if (size < 1) return null;
+		else return query.asList().get(0);
 	}
-	
-	public Session create () {
-		
-		// Create new session.
-		Session session = new Session();
-		
-		// Set user for session.
-		session.setUser(user);
-		
-		// Save session to dab.
-		mongo.getDatastore().save(session);
-		
-		// Return session info to client.
-		return session;
+	public List<Session> list (User user) {
+		Query<Session> query = mongo.getDatastore().createQuery(Session.class);
+		query.filter("user", user);
+		int size = query.asList().size();
+		if (size < 1) return null;
+		else return query.asList();
 	}
-	
 	public Session create (User user) {
-		
-		// Create new session.
 		Session session = new Session();
-		
-		// Set user for session.
 		session.setUser(user);
-		
-		// Save session to dab.
 		mongo.getDatastore().save(session);
-		
-		// Return session info to client.
 		return session;
 	}
-	
-	@Test
 	public boolean delete (Session session) {
 		WriteResult result = mongo.getDatastore().delete(session);
-		
-		// If there was a documented affected, return true, otherwise false.
-		if (result.getN() > 0) {
-			return true;
-		} else {
-			return false;
-		}
-		
+		if (result.getN() > 0) return true;
+		return false;
 	}
+	/*
+	 * Level 1 - Methods that talk directly to the database and don't rely on other methods.
+	 */
+	
+	/*
+	 * Level 2 - Methods that require other methods, and don't talk directly to the database.
+	 */
+	
+	/*
+	 * Returns null if username and password were wrong.
+	 * Returns an ObjectId for the new session if they were right.
+	 */
+	public String registerSession (String username, String password) {
+		// Instancce userModel.
+		UserModel userModel = new UserModel(mongo);
+		
+		// Using user model, get the user.
+		User user = userModel.getByLogin(username, password);
+		
+		// If the user exists (meaning the username & password were right)
+		if (user != null) {
+			
+			// Create a new session.
+			Session session = create(user);
+			
+			// And return the session ObjectId.
+			return session.getId();
+			
+		} else {
+			
+			/// Otherwise return null.
+			return null;
+		}
+	}
+	
+	/*
+	 * Returns 2 if no session was found in the database, should delete the session client side regardless. (Client error)
+	 * Returns 1 if the session was found but could not be deleted. (Server error)
+	 * Returns 0 if the session was found and deleted. (Success)
+	 */
+	public int deleteSession (String id) {
+		
+		// Get the session using the passed ObjectId
+		Session session = getById(id);
+		
+		// If the session could not be found.
+		if (session == null) return 2;
+		
+		// Attempt to delete if found.
+		boolean deleted = delete(session);
+		
+		// If the server couldn't delete it, it's a server error.
+		if (!deleted) return 1;
+		
+		// The server found the session and successfully deleted it.
+		return 0;
+	}
+	
+	/*
+	 * Level 2 - Methods that require other methods, and don't talk directly to the database.
+	 */
 }

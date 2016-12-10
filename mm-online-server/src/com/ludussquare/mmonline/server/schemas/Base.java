@@ -7,13 +7,15 @@ import org.mongodb.morphia.annotations.Id;
 @Entity("base")
 public abstract class Base {
 	@Id
-	protected ObjectId id;
+	protected String id = new ObjectId().toHexString();
+	
+	public Base () {}
 
-	public void setId(ObjectId id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	public ObjectId getId() {
+	public String getId() {
 		return id;
 	}
 	
