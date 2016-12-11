@@ -25,32 +25,28 @@ public class Mongo {
 	
 	public Mongo (Fongo fongo) {
 		
-		// Use the URI to connect to the db.
+		// Use fongo to get client.
 		client = fongo.getMongo();
 		
 		// Set db name.
 		db = fongo.getDB("mm-online-db").getName();
 		
-		// Creates instance for morphia ORM.
-		morphia = new Morphia();
-		
-		// Create mapping of models.
-		morphia.mapPackage("com.ludussquare.mmonline.server.models");
-		
-		// Create data store using the db.
-		datastore = morphia.createDatastore(client, db);
+		setMorphia();
 	}
 	
 	public Mongo () {
 		
+		// Get uri to create MongoClient.
 		uriString = getUriString();
+		client = new MongoClient(uriString);
 		
-		// Set the URI & DB using the properties file.
-		uri = new MongoClientURI(uriString);
+		// Set db.
 		db = "mm-online-db";
-		// Use the URI to connect to the db.
-		client = new MongoClient(uri);
 		
+		setMorphia();
+	}
+	
+	private void setMorphia () {
 		// Creates instance for morphia ORM.
 		morphia = new Morphia();
 		
