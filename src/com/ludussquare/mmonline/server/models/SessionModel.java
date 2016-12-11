@@ -3,7 +3,6 @@ package com.ludussquare.mmonline.server.models;
 import java.util.List;
 
 import org.bson.types.ObjectId;
-import org.junit.Test;
 import org.mongodb.morphia.query.Query;
 
 import com.ludussquare.mmonline.server.schemas.Session;
