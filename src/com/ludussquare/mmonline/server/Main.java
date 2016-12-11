@@ -45,7 +45,7 @@ public class Main {
 		String mode = System.getenv("mode");
 		
 		// Set up database connection.
-		if (mode == "production") {
+		if (mode.equals("production")) {
 			mongo = new Mongo();
 		} else {
 			fongo = new Fongo("mm-online-fongo");
