@@ -29,6 +29,7 @@ public class Main {
 		
 		// Set user controller.
 		userController = new UserController(mongo);
+		sessionController = new SessionController(mongo);
 		
 		// All responses going out are set as json responses.
 		after(new Filter() {
