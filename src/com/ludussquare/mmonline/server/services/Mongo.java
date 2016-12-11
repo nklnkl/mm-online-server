@@ -17,11 +17,7 @@ public class Mongo {
 	private Datastore datastore;
 	private MongoClient client;
 	private MongoClientURI uri;
-	private String uriString;
 	private String db;
-	
-	private Properties properties;
-	private InputStream input;
 	
 	public Mongo (Fongo fongo) {
 		
@@ -37,8 +33,8 @@ public class Mongo {
 	public Mongo () {
 		
 		// Get uri to create MongoClient.
-		uriString = getUriString();
-		client = new MongoClient(uriString);
+		uri = new MongoClientURI(System.getenv("MongoUri"));
+		client = new MongoClient(uri); 	
 		
 		// Set db.
 		db = "mm-online-db";
@@ -55,28 +51,6 @@ public class Mongo {
 		
 		// Create data store using the db.
 		datastore = morphia.createDatastore(client, db);
-	}
-	
-	private String getUriString () {
-		// Set new properties for config.
-		properties = new Properties();
-		
-		input = getClass().getClassLoader().getResourceAsStream("Mongo.properties");
-		// Try to load inputstream into properties data. This will only be successful on local.
-		
-		try {
-			
-			properties.load(input);
-			return properties.getProperty("MongoUri");
-			
-		} catch (IOException e) {
-			
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			
-		}
-		
-		return System.getenv("MongoUri");
 	}
 
 	public Morphia getMorphia() {
